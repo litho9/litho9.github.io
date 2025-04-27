@@ -1,7 +1,3 @@
-layout: page
-title: "ZZZ Export Character"
-permalink: /zzz-char-export
-
 # ZZZ Export Character
 
 This script exports the info in the Blender file in the format the model-importer expects. It doesn't export the textures and doesn't create the INI file... YET!
