@@ -19,10 +19,9 @@ hero:
 
 features:
   - title: Scripts
-    details: Scripts that automate exporting models to the Model Importer.
+    details: Scripts that automate exporting models for the Model Importer.
   - title: Docs
     details: Some explanations on how and WHY things are done in certain ways.
   - title: Glossary
     details: Some basic disambiguation of commonly used terms in the community.
 ---
-

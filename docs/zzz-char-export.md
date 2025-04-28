@@ -1,6 +1,10 @@
 # ZZZ Export Character
 
+## The script
+
 This script exports the info in the Blender file in the format the model-importer expects. It doesn't export the textures and doesn't create the INI file... YET!
+
+You may think "why reinvent the wheel? The current tools are already enough", but I'm a firm believer that the basics are what need most attention when striving to improve something. The tools are always moving in the direction of automating and normalizing the processes, but I believe the simpler you make the mundane, the harder you make the exceptional.
 
 This is the function, with an example on how to call it:
 
@@ -38,10 +42,21 @@ zzz_char_export("MyCharacterMod", bpy.context.selected_objects)
 
 The whole thing is like 30 lines, but there's a lot of stuff in each of them.
 
+::: info
+* The game only expects triangles for polygons. Remember to "Triangulate faces" before executing the script.
+* Also, Blender needs to be on "Object mode" for the script to work.
+:::
+
+::: warning BLENDER VERSION
+The script was made to work with Blender 4.3. There's no guarantee it will work on previous versions.
+:::
+
 ## The formats
 
 The main info the game needs to render a character are the vertex-buffers (VB) and the index-buffer (IB). Characters use 3 VBs (VB0, VB1, and VB2).
 
+* IB:
+  * `numpy.uint16`: or `u2`, an unsigned 2-byte integer for each index.
 * VB0:
   * `3f`: three 4-byte floats, for coordinates x, y, z
   * `3f`: three 4-byte floats, for split-normals x, y, z
@@ -56,7 +71,9 @@ The main info the game needs to render a character are the vertex-buffers (VB) a
   * `4f`: four 4-byte floats, for vertex weights
   * `4i`: four 4-byte integers, for vertex indices
 
-*The `vb1_fmt` is defined as a parameter with a default value because **it can vary**. Character Faces have a different layout, and anything with "inner-textures" may have another `2f2` at the end. Fo facilitate this, I tend to include the actual formats for every model.
+::: info
+*The `vb1_fmt` is defined as a parameter with a default value because **IT CAN VARY**. Character Faces have a different layout, and anything with "inner-textures" may have another `2f2` at the end. To facilitate this, I tend to include the actual formats for every model.
+:::
 
 The VB2 specifies up to 4 slots of index-weight pairs. This is a common practice in games, as you'd probably never need more than 4 vertex groups affecting the same vertex.
 For example, lets say a vertex in the shoulder is affected by 70% of the clavicle (vertex index 1), and 30% by the upper arm (vertex index 13). In the case, it's VB2 block would be `(0.7, 0.3, 0.0, 0.0), (1, 13, 0, 0)`. Zeroes are added if there are less than 4 groups.
@@ -88,6 +105,11 @@ After that we iterate the meshes of the given MeshObjects, and start by printing
 This way, all "parts" are stored in the same buffers, and you can control the `drawindexed` lines in the INI. The 'murican Navia tutorial does a good job in explaining how this approach is excellent for mod that have parts you want to toggle on and off.
 
 ```py
+mesh.calc_tangents()
+```
+Calculates the tangents to be exported. It is done at this stage because this data depends on other info like coordinates and normals.
+
+```py
 for loop in [mesh.loops[i+2-i%3*2] for i in range(len(mesh.loops))]:
 ```
 This line iterates the loops. Instead of just being `for loop in mesh.loops` we have to do a little trick here. You see, if we just iterated the loops in order, the model would end up with **flipped faces**. Loops list faces corners counterclockwise, and when we invert the x-axis we make so the outside and the inside of the faces are switched.
@@ -115,8 +137,10 @@ This is just a compact piece of code to translate Blender data to the format spe
 
 One noticeable thing this does is flip the UVs vertically. This way, the textures behave the same in Blender as in-game. Just remember to flip the DDS's when using them in the mod folder.
 
-Do NOT mess with the vertex_group orders, the game expects them in the specified order.
-Do NOT mess with the UV Maps order either. Having extra or missing UVs will break the script.
+::: warning
+* Do NOT mess with the vertex_group orders, the game expects them in the specified order.
+* Do NOT mess with the UV Maps order either. Having extra or missing UVs will break the script.
+:::
 
 ```py
 ib.append(index_map[h])
@@ -128,7 +152,9 @@ print(f"draw = {len(vb0)}, 0")
 ```
 After all the objects are processed, the script prints the `draw` line you'll need in you INI file. It's the line that looks like "draw = 16890, 0" alongside the vb0 and vb2.
 
+::: tip
 XXMI has a newer version of 3DMigoto that supports a `draw = auto` at this point, so this step might be skipped. But if you want to maintain compatibility with ZZMI, you still need to pay attention to this.
+:::
 
 ```py
 numpy.fromiter(ib, numpy.uint16).tofile(f"{name}IB.buf")
