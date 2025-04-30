@@ -4,7 +4,7 @@
 
 This script exports the info in the Blender file in the format the model-importer expects. It doesn't export the textures and doesn't create the INI file... YET!
 
-You may think "why reinvent the wheel? The current tools are already enough", but I'm a firm believer that the basics are what need most attention when striving to improve something. The tools are always moving in the direction of automating and normalizing the processes, but I believe the simpler you make the mundane, the harder you make the exceptional.
+You may think "why reinvent the wheel? The current tools are already enough", but I'm a firm believer that the basics are what need most attention when striving to improve something. This could all be hidden behind some addon, but I believe the closer you are to HOW you're doing something, the more control you have over WHAT can be done.
 
 This is the function, with an example on how to call it:
 
@@ -40,8 +40,6 @@ os.chdir(r"C:\Users\urmom\Documents\create\mod\zzmi\Mods\MyCharacterMod")
 zzz_char_export("MyCharacterMod", bpy.context.selected_objects)
 ```
 
-The whole thing is like 30 lines, but there's a lot of stuff in each of them.
-
 ::: info
 * The game only expects triangles for polygons. Remember to "Triangulate faces" before executing the script.
 * Also, Blender needs to be on "Object mode" for the script to work.
@@ -50,6 +48,8 @@ The whole thing is like 30 lines, but there's a lot of stuff in each of them.
 ::: warning BLENDER VERSION
 The script was made to work with Blender 4.3. There's no guarantee it will work on previous versions.
 :::
+
+The whole thing is like 30 lines, but there's a lot of stuff in each of them. The rest of this page will attempt to describe what it does.
 
 ## The formats
 
