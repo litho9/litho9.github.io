@@ -1,13 +1,12 @@
 # INI files
 
+## Basics
+
 3DMigoto uses “.ini” files to describe how mods should be loaded. Note that this does not follow the exact official definition of what an INI file should look like.
 
 ::: tip
-The order each block appears in the file doesn't matter.
-:::
-
-::: tip
-The order each param in a block appears DOES matter. For some configs it ends up behaving the same (Ex.: a `handling=skip` at the end works the same as if in the start of the block), but there's a 'sequentiality' to some params (more on the `drawindexed` topic).
+* The order each block appears in the file doesn't matter.
+* The order each param in a block appears DOES matter. For some configs it ends up behaving the same (Ex.: a `handling=skip` at the end works the same as if in the start of the block), but there's a 'sequentiality' to some params (more on the `drawindexed` topic).
 :::
 
 Instead of listing all possible configurations for the INI file, let's start with a simple use case with the most common functionality.
@@ -63,8 +62,8 @@ filename = EllenLingerie3M.dds
 
 Here we see two types of INI blocks: `TextureOverride` and `Resource`.
 
-::: note
-`TextureOverride` and `Resource` are "reserved terms" for 3DMigoto, as it looks for blocks with names starting with those terms to do its thing. On the other hand, what you can write on the rest of the block's name has no effect on the logic.
+::: info
+`TextureOverride` and `Resource` are "reserved terms" for 3DMigoto, as it looks for blocks with names starting with those terms to do its thing. what you can write on the rest of the block's name has no effect on the logic.
 :::
 
 ::: tip
@@ -84,7 +83,7 @@ XXMI has a newer version of 3DMigoto that supports a `draw = auto` at this point
 :::
 
 * `ps-tX`: specify what resource to use for a particular texture slot (Ex.: `ps-t3` means "pixel shader - texture slot 3"). More on texture slots on the INI Texture Slots section.
-* `draindexed`: use a portion of the IB to index what to draw. More on the [IB-VB relation](./ib-vb.md). There are two ways to use this:
+* `draindexed`: use a portion of the IB to index what to draw. More on the [IB-VB relation](../ib-vb.md). There are two ways to use this:
   * `drawindexed = auto` to reference the whole IB.
   * `drawindexed = 5220, 16983, 0` to use just a range of the IB. In this example, it would mean "draw based on 5220 indices, starting from position 16983" (nope, I don't know what the last '0' means, it's always '0').
 
@@ -141,7 +140,7 @@ Take a moment to read the example and try to infer what it is doing. There's thr
 
 The `Constants` block is where you declare ~~constants~~ variables. Adding `global` to the start means it can be used in other INIs. The `persist` modifier indicates the value should be persisted, meaning its current value will be remembered when you reload scripts or restart the game.
 
-`Key` blocks describe functionality for inputs. In this example, it configures VK_UP (the 'up' key on the keyboard) to `cycle` `$neck`'s value between 0 and 1 if `$active` is 1.
+`Key` blocks describe functionality for inputs. In this example, it configures VK_UP (the ↑ key on the keyboard) to `cycle` `$neck`'s value between 0 and 1 if `$active` is 1.
 
 The `Present` block is executed for each frame. In this case, it sets `$active` to 0 at the end of execution. If you wanted it to be before other executions, you'd want `pre` instead of `post`.
 
@@ -154,6 +153,6 @@ With all that out of the way, we can understand how it all works together:
 You can use multiple `drawindexed` lines on the same IB block, each corresponding to a different part of your model.
 As shown in the example, we can control what part of the model is rendered using `if`s and variables.
 
-::: note
+::: info
 This mechanism wasn't broadly known some time ago, so modders would use different IB and VB buffers for every combination of parts in a mod. So if you see a 396MB mod with 637 files and 75 folders (real example) know it could be much, much simpler.
 :::
