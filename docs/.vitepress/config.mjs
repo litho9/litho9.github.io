@@ -4,9 +4,9 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Modding Docs",
   description: "Some insights on modding certain anime games.",
-  head: [['link', { rel: 'icon', href: '/assets/favicon.png' }]],
+  head: [['link', { rel: 'icon', href: '/favicon.png' }]],
   themeConfig: {
-    logo: './assets/favicon.png',
+    logo: '/favicon.png',
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },

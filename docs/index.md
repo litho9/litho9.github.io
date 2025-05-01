@@ -7,7 +7,7 @@ hero:
   text: "Some insights on modding certain anime games."
   tagline: Someone had to do it.
   image:
-    src: "/assets/logo.png"
+    src: /logo.png
   actions:
     - theme: alt
       text: Glossary
