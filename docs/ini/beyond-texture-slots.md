@@ -75,4 +75,47 @@ There are, however, some caveats you need to look for when using this method:
 * The check is lost after you assign something to the slot. For example, comparing `ps-t2 == 1234` will no longer function if it's after the `ps-t2 = ResourceMyDiffuse`.
 * You have to check all the possible slots a texture can be in. It's often only two or three slots, but you have to know where they are, and that can lead to a lot of testing. On the other hand, the textures tend to come in the same order. If ps-t2 is the diffuse, you can count on ps-t3 to be the NormalMap a ps-t4 to be the MaterialMap*
 
-## custom textures for each model PART TODO
+### Restoring original textures
+
+If you're modding something that uses a texture shared among many models (aaagh the whole Lumina square is blinking like crazy) you can override the slot again with the original texture, after the `drawindexed`. This won't be a problem if you're just modding characters, but try to replace a B-rank engine with an aranara and you'll understand what I mean.
+
+```ini
+[TextureOverride.MyIB]
+hash = 4b48b731
+handling = skip
+ps-t2 = ResourceMyDiffuse
+drawindexed = auto
+ps-t2 = ResourceOriginalDiffuse
+
+[ResourceMyDiffuse]
+filename = MyDiffuse.dds
+
+[ResourceOriginalDiffuse]
+filename = OriginalDiffuse.dds
+```
+
+## Different textures for model parts
+One neat thing you can do is use different textures for each `drawindexed`:
+```ini
+[TextureOverrideEllenHair.IB]
+hash = d44a8015
+handling = skip
+ib = ResourceEllenHairIB
+; MAT_Ellen_Body_2
+drawindexed = 10440, 0, 0
+; Material.002
+ps-t3 = ResourceEllenHair1Diffuse
+ps-t4 = ResourceEllenHair2Normal
+ps-t5 = ResourceEllenHair3Material
+ps-t6 = ResourceEllenHair3Alter
+drawindexed = 13218, 10440, 0
+; Material.003
+ps-t3 = ResourceEllenHair1Diffuse2
+ps-t4 = ResourceEllenHair2Normal2
+ps-t5 = ResourceEllenHair3Material2
+ps-t6 = ResourceEllenHair3Alter2
+drawindexed = 22920, 13218, 0
+```
+Yes, this works.
+
+With this approach, you don't need to merge textures, scale UVs, etc. I've tested it and didn't notice any performance issues.

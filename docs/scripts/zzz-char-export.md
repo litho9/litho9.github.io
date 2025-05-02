@@ -102,7 +102,7 @@ def zzz_char_export(name, objs, vb1_fmt="4u1,2f2,2f,2f2"):
 At the start of the function, we initialize the buffers and the index_map, the latter holding what loops have already been considered for storing (as specified in the IB-VB relation).
 
 After that we iterate the meshes of the given MeshObjects, and start by printing the `drawindexed` line for each of them. It's printed to the System Console. If it's not opened, go to Window > Toggle System Console.
-This way, all "parts" are stored in the same buffers, and you can control the `drawindexed` lines in the INI. The 'murican Navia tutorial does a good job in explaining how this approach is excellent for mod that have parts you want to toggle on and off.
+This way, all "parts" are stored in the same buffers, and you can control the `drawindexed` lines in the INI. This approach is excellent for mod that have parts you want to toggle on and off.
 
 ```py
 mesh.calc_tangents()
@@ -113,7 +113,7 @@ Calculates the tangents to be exported. It is done at this stage because this da
 for loop in [mesh.loops[i+2-i%3*2] for i in range(len(mesh.loops))]:
 ```
 This line iterates the loops. Instead of just being `for loop in mesh.loops` we have to do a little trick here. You see, if we just iterated the loops in order, the model would end up with **flipped faces**. Loops list faces corners counterclockwise, and when we invert the x-axis we make so the outside and the inside of the faces are switched.
-To avoid that, this reverses every 3 loops, so instead of reading [0, 1, 2, 3, 4, 5, ...], we read [2, 1, 0, 5, 4, 3, ...].
+To avoid that, this reverses the loops of each face (polygon), so instead of reading [0, 1, 2, 3, 4, 5, ...], we read [2, 1, 0, 5, 4, 3, ...].
 
 ```py
 h = (loop.vertex_index, *mesh.uv_layers[0].data[loop.index].uv, *loop.normal)
@@ -121,8 +121,8 @@ if h not in index_map:
     index_map[h] = len(vb0)
 ```
 The `h` variable will be the key for the `index_map`.
-As described in the IB-VB relation, we detect here if this isn't a repeated loop data. Repeated data will be skipped.
-If it's a new VB block, we store the current index (that is any VBs current length) on the map using the `h` key.
+As described in the IB-VB relation, we detect here if this isn't a repeated loop block. Repeated data will be skipped.
+If it's a new VB block, we store the current index (that is the VBs current length) on the map using the `h` key.
 
 ```py
 v = mesh.vertices[loop.vertex_index]
@@ -170,12 +170,12 @@ Lastly, we save the IB and VBs to `.buf` files. Note that the game originally us
 os.chdir(r"C:\Users\urmom\Documents\create\mod\zzmi\Mods\MyCharacterMod")
 zzz_char_export("MyCharacterMod", bpy.context.selected_objects)
 ```
-With `os.chdir` we can change the current directory we're in, so the generated files get created directly in the mod folder. This makes testing really fast, as we can run the script, hit f10, and already see any changes in game.
+With `os.chdir` we can change the current directory we're in, so the generated files get created directly in the mod folder. This makes testing really fast, as we can run the script, hit f10, and already see any changes in-game.
 
 In this example, the function takes the selected objects listed alphabetically, but you can specify any objects in any order creating an array.
 
 ## TL;DR
 Just specify the mod folder and run the script, and you `.buf` files will be created.
 If it doesn't work you have two options:
-* Curl in the floor and cry miserably.
+* Curl on the floor and cry miserably.
 * Read the damn thing. 
